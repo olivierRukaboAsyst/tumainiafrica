@@ -7,10 +7,9 @@ import anubis.lab.anubisproject.features.utilisateur.service.UtilisateurResolver
 import org.springframework.web.bind.annotation.*;
 import anubis.lab.anubisproject.features.utilisateur.dto.UtilisateurDTO;
 import anubis.lab.anubisproject.features.utilisateur.entity.Utilisateur;
-import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/utilisateur")
+@RequestMapping("/utilisateurs")
 public class UserController {
 
     private UtilisateurResolver utilisateurService;
