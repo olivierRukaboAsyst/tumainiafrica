@@ -1,53 +1,73 @@
 package anubis.lab.anubisproject.features.tag.controller;
 
-import anubis.lab.anubisproject.features.tag.dto.TagDTO;
+import anubis.lab.anubisproject.exceptions.ErrorEntity;
 import anubis.lab.anubisproject.features.tag.entity.Tag;
 import anubis.lab.anubisproject.features.tag.service.TagService;
-import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping("/tags")
 public class TagController {
 
     private TagService tagService;
 
+    public TagController(TagService tagService) {
+        this.tagService = tagService;
+    }
+
     @PostMapping
-    public TagDTO addTag(@RequestBody Tag tag){
+    public ResponseEntity<?> addTag(@RequestBody Tag tag){
         try {
-            return tagService.addTag(tag);
+            return ResponseEntity.ok(tagService.addTag(tag));
         }catch (Exception e){
-            throw new RuntimeException(String.format("Echec lors de l'ajout du tag"));
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    @PutMapping
-    public TagDTO updateTag(@PathVariable Long idTag, @RequestBody Tag tag){
+    @PutMapping("/{idTag}")
+    public ResponseEntity<?> updateTag(@PathVariable Long idTag, @RequestBody Tag tag){
         try {
-            return tagService.updateTag(idTag, tag);
+            return ResponseEntity.ok(tagService.updateTag(idTag, tag));
         }catch (Exception e){
-            throw new RuntimeException(String.format("Echec lors de la modification du tag"));
+            return ResponseEntity.status(BAD_REQUEST).body(new ErrorEntity(null, e.getMessage()));
         }
     }
 
     @GetMapping("/{idTag}")
-    public Tag getTag(@PathVariable Long idTag){
-        return tagService.getTag(idTag);
+    public ResponseEntity<?> getTag(@PathVariable Long idTag){
+        try {
+            return ResponseEntity.ok(tagService.getTag(idTag));
+        }catch (Exception e){
+            return ResponseEntity.status(NOT_FOUND).body(new ErrorEntity(null, e.getMessage()));
+        }
     }
-    @GetMapping("/{tagName}")
-    public Tag getTagByName(@PathVariable String tagName){
-        return tagService.getTagByName(tagName);
+    @GetMapping("name/{tagName}")
+    public ResponseEntity<?> getTagByName(@PathVariable String tagName){
+        try {
+            return ResponseEntity.ok(tagService.getTagByName(tagName));
+        }catch (Exception e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ErrorEntity(null, e.getMessage()));
+        }
     }
     @GetMapping
-    public List<TagDTO> getTags(){
-        return tagService.getTags();
+    public ResponseEntity<?> getTags(){
+        try {
+            return ResponseEntity.ok(tagService.getTags());
+        }catch (Exception e){
+            return ResponseEntity.status(NOT_FOUND).body(new ErrorEntity(null, e.getMessage()));
+        }
     }
     @DeleteMapping
-    public Boolean deleteTag(@PathVariable Long idTag){
-        return tagService.deleteTag(idTag);
+    public ResponseEntity<?> deleteTag(@PathVariable Long idTag){
+        try {
+            return ResponseEntity.ok(tagService.deleteTag(idTag));
+        }catch (Exception e) {
+            return ResponseEntity.status(BAD_REQUEST).body(new ErrorEntity(null, e.getMessage()));
+        }
     }
 
 }

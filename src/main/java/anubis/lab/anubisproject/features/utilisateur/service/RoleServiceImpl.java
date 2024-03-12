@@ -5,6 +5,7 @@ import anubis.lab.anubisproject.features.utilisateur.entity.Role;
 import anubis.lab.anubisproject.features.utilisateur.mapper.UtilisateurMapper;
 import anubis.lab.anubisproject.features.utilisateur.repository.RoleRepository;
 import anubis.lab.anubisproject.helpers.Constant;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -48,11 +49,10 @@ public class RoleServiceImpl implements RoleResolver{
         }
     }
     @Override
-    public Role getRole(Long idRole){
-        Role role = new Role();
-        Role finalRole = role;
+    public Role getRole(Long idRole) throws EntityNotFoundException{
+        Role role;
         role = roleRepository.findById(idRole).orElseThrow(()->
-                new RuntimeException(String.format("L'ID " + finalRole.getIdRole() + " de ce role est introuvable")));
+                new EntityNotFoundException(String.format("L'ID " +idRole+ " de ce role est introuvable")));
         return role;
     }
     @Override

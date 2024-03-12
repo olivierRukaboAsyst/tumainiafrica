@@ -4,6 +4,7 @@ import anubis.lab.anubisproject.features.tag.mapper.TagMapper;
 import anubis.lab.anubisproject.features.tag.Repository.TagRepository;
 import anubis.lab.anubisproject.features.tag.dto.TagDTO;
 import anubis.lab.anubisproject.features.tag.entity.Tag;
+import anubis.lab.anubisproject.helpers.Constant;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagDTO addTag(Tag tag) {
+        tag.setCreatedAt(new Constant().dateFormated());
         Tag savedTag = tagRepository.save(tag);
 
         return mapper.fromTag(savedTag);
@@ -34,16 +36,13 @@ public class TagServiceImpl implements TagService {
                 if (requestTag.getDescription() != null){
                     tag.setDescription(requestTag.getDescription());
                 }
-                if (requestTag.getIconUrl() != null){
-                    tag.setIconUrl(requestTag.getIconUrl());
-                }
             }
+            tag.setUpdatedAt(new Constant().dateFormated());
             Tag updatedtag = tagRepository.save(tag);
             return mapper.fromTag(updatedtag);
         }catch (Exception c){
             throw new RuntimeException(String.format("Erreur lors de la modification"));
         }
-
     }
 
     @Override

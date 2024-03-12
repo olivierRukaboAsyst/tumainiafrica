@@ -3,6 +3,7 @@ package anubis.lab.anubisproject.features.comment.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import anubis.lab.anubisproject.helpers.Constant;
 import org.springframework.stereotype.Service;
 
 import anubis.lab.anubisproject.features.article.entity.Article;
@@ -16,34 +17,43 @@ import anubis.lab.anubisproject.features.customer.service.CustomerService;
 import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
-    private CommentRepository commentRepository;
-    private ArticleResolver articleResolver;
-    private CustomerService customerService;
-    private CommentMapper mapper;
+    private final CommentRepository commentRepository;
+    private final ArticleResolver articleResolver;
+    private final CustomerService customerService;
+    private final CommentMapper mapper;
+
+    public CommentServiceImpl(CommentRepository commentRepository, ArticleResolver articleResolver, CustomerService customerService, CommentMapper mapper) {
+        this.commentRepository = commentRepository;
+        this.articleResolver = articleResolver;
+        this.customerService = customerService;
+        this.mapper = mapper;
+    }
 
     @Override
     public CommentDTO addComment(Comment comment, Long idArticle, String idCustomer) {
-        Article article = articleResolver.getArticle(idArticle);
-        Customer customer = customerService.getCustomer(idCustomer);
+        Article article = this.articleResolver.getArticle(idArticle);
+        Customer customer = this.customerService.getCustomer(idCustomer);
         try {
-            comment.setArticle(article);
-            comment.setCustomer(customer);
+            if (idArticle == null | idCustomer == null | comment.getContent() == null){
+                throw new RuntimeException(String.format("Tout les champs sont obligatoire"));
+            }else {
+                comment.setArticle(article);
+                comment.setCustomer(customer);
+            }
+            comment.setCreatedAt(new Constant().dateFormated());
             Comment savedComment = commentRepository.save(comment);
-            return mapper.fromCmmentDTO(savedComment);
+            return mapper.fromCommentDTO(savedComment);
         } catch (Exception e) {
             throw new RuntimeException(String.format("Erreur lors de l'ajout de commentaire"));
         }
-
     }
 
     @Override
     public Comment getComment(Long idComment) {
-        Comment comment = commentRepository.findById(idComment)
+        return commentRepository.findById(idComment)
                 .orElseThrow(() -> new RuntimeException("Ce commentaire n'existe pas"));
-        return comment;
     }
 
     @Override
@@ -53,26 +63,21 @@ public class CommentServiceImpl implements CommentService {
         Customer customer = customerService.getCustomer(idCustomer);
         try {
             if (comment != null) {
-                if (idComment == null | idArticle == null | idCustomer == null | comment.getContent() == null){
-                    throw new RuntimeException(String.format("Tout les champs sont obligatoire"));
-                }else{
-                    if (idArticle != null) {
-                        comment.setArticle(article);
-                    }
-                    if (idCustomer != null) {
-                        comment.setCustomer(customer);
-                    }
-                    if (requestComment.getContent() != null) {
-                        comment.setContent(requestComment.getContent());
-                    }
+                if (idArticle != null) {
+                    comment.setArticle(article);
+                }
+                if (idCustomer != null) {
+                    comment.setCustomer(customer);
+                }
+                if (requestComment.getContent() != null) {
+                    comment.setContent(requestComment.getContent());
                 }
             }
+            comment.setUpdatedAt(new Constant().dateFormated());
 
             Comment savedComment = commentRepository.save(comment);
-            return mapper.fromCmmentDTO(savedComment);
-        } catch (
-
-        Exception e) {
+            return mapper.fromCommentDTO(savedComment);
+        } catch (Exception e) {
             throw new RuntimeException(String.format("Erreur lors de la modification"));
         }
     }
@@ -83,7 +88,7 @@ public class CommentServiceImpl implements CommentService {
         if (comments.isEmpty()) {
             throw new RuntimeException(String.format("Pas des commentaires pour l'instant"));
         }
-        List<CommentDTO> commentDTOs = comments.stream().map(c -> mapper.fromCmmentDTO(c)).collect(Collectors.toList());
+        List<CommentDTO> commentDTOs = comments.stream().map(c -> mapper.fromCommentDTO(c)).collect(Collectors.toList());
         return commentDTOs;
     }
 

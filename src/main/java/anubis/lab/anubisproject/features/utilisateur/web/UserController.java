@@ -33,7 +33,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{idUtilisateur}")
     public ResponseEntity<?> getUtilisateur(@PathVariable Long idUtilisateur) {
         try {
             return ResponseEntity.ok(utilisateurService.getUtilisateur(idUtilisateur));

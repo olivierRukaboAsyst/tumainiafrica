@@ -3,6 +3,7 @@ package anubis.lab.anubisproject.features.category.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import anubis.lab.anubisproject.helpers.Constant;
 import org.springframework.stereotype.Service;
 
 import anubis.lab.anubisproject.features.category.dto.CategoryDTO;
@@ -20,6 +21,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDTO addCategory(Category category) {
+        category.setCreatedAt(new Constant().dateFormated());
         Category savedCategory = categoryRepository.save(category);
         return mapper.fromCategory(savedCategory);
     }
@@ -31,24 +33,24 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO updateCategory(Long idCategory, Category category) {
-        category = getCategory(idCategory);
+    public CategoryDTO updateCategory(Long idCategory, Category requestCategory) {
+        Category category = getCategory(idCategory);
         try {
-            if (category != null) {
-                if (category.getName() != null) {
-                    category.setName(category.getName());
+            if (requestCategory != null) {
+                if (requestCategory.getName() != null) {
+                    category.setName(requestCategory.getName());
                 }
-                if (category.getDescription() != null) {
-                    category.setDescription(category.getDescription());
+                if (requestCategory.getDescription() != null) {
+                    category.setDescription(requestCategory.getDescription());
                 }
-                Category savedCategory = categoryRepository.save(category);
-                return mapper.fromCategory(savedCategory);
+                category.setUpdatedAt(new Constant().dateFormated());
             }
-        } catch (Exception e) {
-            throw new RuntimeException(String.format("Erreur lor de la modification dans IMPL"));
-        }
-        return null;
 
+            Category savedCategory = categoryRepository.save(category);
+            return mapper.fromCategory(savedCategory);
+        } catch (Exception e) {
+            throw new RuntimeException(String.format("Erreur lor de la modification"));
+        }
     }
 
     @Override

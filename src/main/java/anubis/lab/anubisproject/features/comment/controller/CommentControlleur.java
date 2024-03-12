@@ -2,6 +2,8 @@ package anubis.lab.anubisproject.features.comment.controller;
 
 import java.util.List;
 
+import anubis.lab.anubisproject.exceptions.ErrorEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,6 +11,9 @@ import anubis.lab.anubisproject.features.comment.dto.CommentDTO;
 import anubis.lab.anubisproject.features.comment.entity.Comment;
 import anubis.lab.anubisproject.features.comment.service.CommentService;
 import lombok.AllArgsConstructor;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Controller
 @RequestMapping("/comments")
@@ -18,33 +23,52 @@ public class CommentControlleur {
     private CommentService commentService;
 
     @GetMapping("/{idComment}")
-    public Comment getComment(@PathVariable Long idComment) {
-        Comment comment = commentService.getComment(idComment);
+    public ResponseEntity<?> getComment(@PathVariable Long idComment) {
+        try {
+            Comment comment = commentService.getComment(idComment);
+            return ResponseEntity.ok(comment);
+        }catch (Exception e){
+            return ResponseEntity.status(NOT_FOUND).body(new ErrorEntity(null, e.getMessage()));
+        }
 
-        return comment;
     }
 
     @GetMapping
-    public List<CommentDTO> getAllComments() {
-        List<CommentDTO> commentDTOs = commentService.getAllComments();
-
-        return commentDTOs;
+    public ResponseEntity<?> getAllComments() {
+        try {
+            List<CommentDTO> commentDTOs = commentService.getAllComments();
+            return ResponseEntity.ok(commentDTOs);
+        }catch (Exception e){
+            return ResponseEntity.status(NOT_FOUND).body(new ErrorEntity(null, e.getMessage()));
+        }
     }
 
     @PostMapping()
-    public CommentDTO addComment(@RequestBody Comment comment, @RequestParam Long idArticle, @RequestParam String idCustomer) {
-        return commentService.addComment(comment, idArticle, idCustomer);
+    public ResponseEntity<?> addComment(@RequestBody Comment comment, @RequestParam Long idArticle, @RequestParam String idCustomer) {
+        try {
+            return ResponseEntity.ok(commentService.addComment(comment, idArticle, idCustomer));
+        }catch (Exception e){
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PutMapping("/{idComment}")
-    public CommentDTO updateComment(@PathVariable Long idComment, @RequestParam Long idArticle, @RequestParam String idCustomer,
+    public ResponseEntity<?> updateComment(@PathVariable Long idComment, @RequestParam Long idArticle, @RequestParam String idCustomer,
             @RequestBody Comment comment) {
-        return commentService.updateComment(idComment, idArticle, idCustomer, comment);
+        try {
+            return ResponseEntity.ok(commentService.updateComment(idComment, idArticle, idCustomer, comment));
+        }catch (Exception e){
+            return ResponseEntity.status(BAD_REQUEST).body(new ErrorEntity(null, e.getMessage()));
+        }
     }
 
     @DeleteMapping("/{idComment}")
-    public Boolean deleteComment(@PathVariable Long idComment) {
-        return commentService.deleteComment(idComment);
+    public ResponseEntity<?> deleteComment(@PathVariable Long idComment) {
+        try {
+            return ResponseEntity.ok(commentService.deleteComment(idComment));
+        }catch (Exception e){
+            return ResponseEntity.status(BAD_REQUEST).body(new ErrorEntity(null, e.getMessage()));
+        }
     }
 
 }

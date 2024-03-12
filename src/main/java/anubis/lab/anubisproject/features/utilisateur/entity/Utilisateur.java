@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import anubis.lab.anubisproject.features.article.entity.Article;
@@ -30,6 +31,7 @@ public class Utilisateur {
     @ManyToMany(mappedBy = "utilisateurs")
     private List<Article> articles;
     @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<UtilisateurRole> utilisateurRoles = new HashSet<>();
     private String createdAt;
     private String updatedAt;

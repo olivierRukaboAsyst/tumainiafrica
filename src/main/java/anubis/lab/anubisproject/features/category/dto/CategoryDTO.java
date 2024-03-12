@@ -7,9 +7,10 @@ import lombok.Data;
 @Data
 public class CategoryDTO {
 
-    private int id;
+    private Long id;
     private String name;
+    private String iconUrl;
     private String description;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private String createdAt;
+    private String updatedAt;
 }

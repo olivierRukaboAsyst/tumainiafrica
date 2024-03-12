@@ -1,23 +1,12 @@
 package anubis.lab.anubisproject.features.category.entity;
 
-import java.time.LocalDate;
 import java.util.List;
 
-import anubis.lab.anubisproject.features.tag.entity.Tag;
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import anubis.lab.anubisproject.features.article.entity.Article;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class Category {
 
@@ -26,11 +15,78 @@ public class Category {
     private Long id;
     private String name;
     private String description;
+    private String iconUrl;
     @ManyToMany(mappedBy = "categories")
     private List<Article> articles;
-    @CreationTimestamp
-    private LocalDate createdAt;
-    @UpdateTimestamp
-    private LocalDate updatedAt;
+    private String createdAt;
+    private String updatedAt;
 
+    public Category() {
+    }
+
+    public Category(Long id, String name, String description, String iconUrl, List<Article> articles, String createdAt, String updatedAt) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.iconUrl = iconUrl;
+        this.articles = articles;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getIconUrl() {
+        return iconUrl;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
+    }
+
+    public List<Article> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(List<Article> articles) {
+        this.articles = articles;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

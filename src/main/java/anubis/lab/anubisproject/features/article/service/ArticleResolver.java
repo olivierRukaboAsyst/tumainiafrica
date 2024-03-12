@@ -13,5 +13,6 @@ public interface ArticleResolver extends GraphQLQueryResolver, GraphQLMutationRe
     Article getArticle(Long id);
     ArticleDTO updateArticle(Long idArticle, List<Long> idCategories, List<Long> idTags, Long idUtilisateur);
     List<ArticleDTO> getAllArticles();
+    ArticleDTO addUserOnArticle(Long idArticle, Long idUtilisateur);
     Boolean deleteArticle(Long id);
 }

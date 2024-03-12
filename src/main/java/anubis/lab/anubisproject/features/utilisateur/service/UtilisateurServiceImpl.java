@@ -44,9 +44,9 @@ public class UtilisateurServiceImpl implements UtilisateurResolver {
     }
 
     @Override
-    public UtilisateurDTO addUtilisateur(Utilisateur utilisateur, List<Long> idRoles) throws BadRequestExeption, NotFoundException {
+    public UtilisateurDTO addUtilisateur(Utilisateur utilisateur, List<Long> idRoles) throws BadRequestExeption {
 
-//        try {
+        try {
             if (idRoles == null || idRoles.isEmpty()){
                 List<Long> ar = new ArrayList<>();
                 ar.add(1L);
@@ -58,9 +58,6 @@ public class UtilisateurServiceImpl implements UtilisateurResolver {
                 Role list;
                 for (Long idRole : idRoles) {
                     list = roleResolver.getRole(idRole);
-                    if (Objects.isNull(list)) {
-                        throw new NotFoundException("Le role avec " + list.getIdRole() + " n'xiste pas dans le systeme");
-                    }
                     roles.add(list);
                 }
                 utilisateur.setRoles(roles);
@@ -70,9 +67,9 @@ public class UtilisateurServiceImpl implements UtilisateurResolver {
 
             Utilisateur savedUtilisateur = utilisateurRepository.save(utilisateur);
             return mapper.fromUtilisateur(savedUtilisateur);
-//        }catch (Exception e){
-//            throw new BadRequestExeption("Erreur lors de la sauvegarde");
-//        }
+        }catch (Exception e){
+            throw new BadRequestExeption("Erreur lors de la sauvegarde");
+        }
 
     }
 

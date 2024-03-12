@@ -45,7 +45,7 @@ public class ArticleServiceImpl implements ArticleResolver {
             Tag tag = tagService.getTag(id);
         });
         Article savedArticle = new Article();
-        article.setIsPublished(true);
+        article.setPublished(true);
 
         savedArticle = articleRepository.save(article);
 
@@ -98,6 +98,20 @@ public class ArticleServiceImpl implements ArticleResolver {
 
         return articleDTO;
     }
+
+    @Override
+    public ArticleDTO addUserOnArticle(Long idArticle, Long idUtilisateur) {
+        Utilisateur utilisateur = utilisateurService.getUtilisateur(idUtilisateur);
+        Article article = getArticle(idArticle);
+        try {
+            article.getUtilisateurs().add(utilisateur);
+            articleRepository.save(article);
+        }catch (Exception e){
+
+        }
+        return null;
+    }
+
 
     @Override
     public Boolean deleteArticle(Long idArticle) {

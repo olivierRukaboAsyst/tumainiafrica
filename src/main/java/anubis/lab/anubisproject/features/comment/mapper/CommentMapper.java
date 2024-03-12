@@ -9,7 +9,7 @@ import anubis.lab.anubisproject.features.comment.entity.Comment;
 @Service
 public class CommentMapper{
     
-    public CommentDTO fromCmmentDTO(Comment comment){
+    public CommentDTO fromCommentDTO(Comment comment){
         CommentDTO commentDTO = new CommentDTO();
         BeanUtils.copyProperties(comment, commentDTO);
         return commentDTO;
