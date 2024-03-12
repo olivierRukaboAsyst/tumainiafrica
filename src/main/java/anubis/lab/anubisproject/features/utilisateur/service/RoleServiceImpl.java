@@ -4,10 +4,12 @@ import anubis.lab.anubisproject.features.utilisateur.dto.RoleDTO;
 import anubis.lab.anubisproject.features.utilisateur.entity.Role;
 import anubis.lab.anubisproject.features.utilisateur.mapper.UtilisateurMapper;
 import anubis.lab.anubisproject.features.utilisateur.repository.RoleRepository;
+import anubis.lab.anubisproject.helpers.Constant;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -19,6 +21,7 @@ public class RoleServiceImpl implements RoleResolver{
     @Override
     public RoleDTO addRole(Role role) {
         try {
+            role.setCreatedAt(new Constant().dateFormated());
             Role savedRole = roleRepository.save(role);
             return mapper.fromRole(savedRole);
         }catch (Exception e){
@@ -27,12 +30,17 @@ public class RoleServiceImpl implements RoleResolver{
     }
 
     @Override
-    public RoleDTO updateRole(Long idRole) {
+    public RoleDTO updateRole(Long idRole, Role requestRole) {
         Role role = getRole(idRole);
 
         try {
             if (role != null){
+                if (Objects.nonNull(requestRole.getRoleName())){
+                    role.setRoleName(requestRole.getRoleName());
+                }
             }
+            assert role != null;
+            role.setUpdatedAt(new Constant().dateFormated());
             Role savedRole = roleRepository.save(role);
             return mapper.fromRole(savedRole);
         }catch (Exception e){
@@ -41,18 +49,19 @@ public class RoleServiceImpl implements RoleResolver{
     }
     @Override
     public Role getRole(Long idRole){
-        Role role = roleRepository.findById(idRole).orElseThrow(()->
-                new RuntimeException(String.format("Ce role est introuvable")));
+        Role role = new Role();
+        Role finalRole = role;
+        role = roleRepository.findById(idRole).orElseThrow(()->
+                new RuntimeException(String.format("L'ID " + finalRole.getIdRole() + " de ce role est introuvable")));
         return role;
     }
     @Override
     public List<RoleDTO> getRoles() {
         List<Role> roles = roleRepository.findAll();
         if (roles.isEmpty()){
-            throw new RuntimeException(String.format("Pas des roles enregistrés"));
+            throw new RuntimeException("Pas des roles enregistrés");
         }
-        List<RoleDTO> roleDTOS = roles.stream().map(r -> mapper.fromRole(r)).collect(Collectors.toList());
-        return roleDTOS;
+        return roles.stream().map(r -> mapper.fromRole(r)).collect(Collectors.toList());
     }
 
     @Override

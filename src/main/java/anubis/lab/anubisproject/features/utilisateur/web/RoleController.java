@@ -1,39 +1,61 @@
 package anubis.lab.anubisproject.features.utilisateur.web;
 
+import anubis.lab.anubisproject.exceptions.ErrorEntity;
 import anubis.lab.anubisproject.features.utilisateur.dto.RoleDTO;
 import anubis.lab.anubisproject.features.utilisateur.entity.Role;
 import anubis.lab.anubisproject.features.utilisateur.service.RoleResolver;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 @RestController
-@RequestMapping("/role")
+@RequestMapping("/roles")
 public class RoleController {
     private RoleResolver roleResolver;
 
-    public RoleController(RoleResolver roleResolver) {
+    public RoleController(RoleResolver roleResolver){
         this.roleResolver = roleResolver;
     }
 
     @PostMapping
-    public RoleDTO addRole(@RequestBody Role role){
-        return roleResolver.addRole(role);
+    public ResponseEntity<?> addRole(@RequestBody Role role){
+        try {
+            return ResponseEntity.ok(roleResolver.addRole(role));
+        }catch (Exception e){
+            return ResponseEntity.status(BAD_REQUEST).body(new ErrorEntity(null, e.getMessage()));
+        }
     }
 
-    @PutMapping
-    RoleDTO updateRole(@PathVariable Long idRole){
-        return roleResolver.updateRole(idRole);
+    @PutMapping("/{idRole}")
+    public ResponseEntity updateRole(@PathVariable Long idRole, @RequestBody Role role){
+        try {
+            return ResponseEntity.ok(roleResolver.updateRole(idRole, role));
+        }catch (Exception e){
+            return ResponseEntity.status(BAD_REQUEST).body(new ErrorEntity(null, e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{idRole}")
+    public ResponseEntity getRole(@PathVariable Long idRole){
+        try {
+            return ResponseEntity.ok(roleResolver.getRole(idRole));
+        }catch (Exception e){
+            return ResponseEntity.status(NOT_FOUND).body(new ErrorEntity(null, e.getMessage()));
+        }
+
     }
 
     @GetMapping
-    public Role getRole(@PathVariable Long idRole){
-        return roleResolver.getRole(idRole);
-    }
-
-    @GetMapping
-    public List<RoleDTO> getRoles(){
-        return roleResolver.getRoles();
+    public ResponseEntity getRoles(){
+        try {
+            return ResponseEntity.ok(roleResolver.getRoles());
+        }catch (Exception e){
+            return ResponseEntity.status(NOT_FOUND).body(new ErrorEntity(null, e.getMessage()));
+        }
     }
 
     @DeleteMapping

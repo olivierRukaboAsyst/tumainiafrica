@@ -1,17 +1,41 @@
 package anubis.lab.anubisproject.features.utilisateur.dto;
 
-import anubis.lab.anubisproject.features.utilisateur.entity.Utilisateur;
-import jakarta.persistence.ManyToOne;
-import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
-
-@Data
 public class RoleDTO {
     private Long idRole;
     private String roleName;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private String createdAt;
+    private String updatedAt;
+
+    public Long getIdRole() {
+        return idRole;
+    }
+
+    public void setIdRole(Long idRole) {
+        this.idRole = idRole;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

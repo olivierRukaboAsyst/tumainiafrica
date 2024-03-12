@@ -14,7 +14,7 @@ public class UtilisateurDTO {
     private String lastname;
     private String email;
     private String phoneNumber;
-    private String roles;
+    private List<RoleDTO> roles;
     private String description;
     private LocalDate birthDate;
     private List<ArticleDTO> articles;

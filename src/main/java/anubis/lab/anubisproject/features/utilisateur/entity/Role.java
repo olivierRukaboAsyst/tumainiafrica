@@ -13,9 +13,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
 @Builder
 public class Role {
 
@@ -24,11 +21,57 @@ public class Role {
     private String roleName;
     @ManyToOne()
     private Utilisateur utilisateur;
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UtilisateurRole> utilisateurRoles = new HashSet<>();
-    @CreationTimestamp
-    private LocalDate createdAt;
-    @UpdateTimestamp
-    private LocalDate updatedAt;
+    private String createdAt;
+    private String updatedAt;
 
+    public Role() {
+    }
+
+    public Role(Long idRole, String roleName, Utilisateur utilisateur, String createdAt, String updatedAt) {
+        this.idRole = idRole;
+        this.roleName = roleName;
+        this.utilisateur = utilisateur;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public Long getIdRole() {
+        return idRole;
+    }
+
+    public void setIdRole(Long idRole) {
+        this.idRole = idRole;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public Utilisateur getUtilisateur() {
+        return utilisateur;
+    }
+
+    public void setUtilisateur(Utilisateur utilisateur) {
+        this.utilisateur = utilisateur;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

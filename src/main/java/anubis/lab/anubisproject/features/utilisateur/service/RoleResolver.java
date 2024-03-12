@@ -8,7 +8,7 @@ import java.util.List;
 public interface RoleResolver {
 
     RoleDTO addRole(Role role);
-    RoleDTO updateRole(Long idRole);
+    RoleDTO updateRole(Long idRole, Role role);
     Role getRole(Long idRole);
     List<RoleDTO> getRoles();
     Boolean deleteRole(Long idRole);

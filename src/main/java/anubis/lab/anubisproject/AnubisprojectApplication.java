@@ -69,8 +69,7 @@ public class AnubisprojectApplication {
 			for (int i = 0; i < 4; i++) {
 				String name = "Customer";
 				Customer customer = new Customer();
-				customer.setFirstname(name + i);
-				customer.setLastname(name + i + "last");
+				customer.setFullname("full "+name + i);
 				customer.setEmail((name + "@gmail.com").toLowerCase());
 				customerRepository.save(customer);
 			}
