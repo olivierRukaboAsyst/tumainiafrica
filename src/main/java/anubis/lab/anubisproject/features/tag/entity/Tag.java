@@ -4,6 +4,7 @@ import anubis.lab.anubisproject.features.article.entity.Article;
 import jakarta.persistence.*;
 import lombok.Builder;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Builder
@@ -12,15 +13,15 @@ public class Tag {
     private Long idTag;
     private String name;
     private String description;
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<Article> articles;
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
+    private Set<Article> articles;
     private String createdAt;
     private String updatedAt;
 
     public Tag() {
     }
 
-    public Tag(Long idTag, String name, String description, List<Article> articles, String createdAt, String updatedAt) {
+    public Tag(Long idTag, String name, String description, Set<Article> articles, String createdAt, String updatedAt) {
         this.idTag = idTag;
         this.name = name;
         this.description = description;
@@ -53,11 +54,11 @@ public class Tag {
         this.description = description;
     }
 
-    public List<Article> getArticles() {
+    public Set<Article> getArticles() {
         return articles;
     }
 
-    public void setArticles(List<Article> articles) {
+    public void setArticles(Set<Article> articles) {
         this.articles = articles;
     }
 

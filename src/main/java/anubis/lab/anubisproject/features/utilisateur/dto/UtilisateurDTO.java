@@ -17,6 +17,9 @@ public class UtilisateurDTO {
     private List<RoleDTO> roles;
     private String description;
     private LocalDate birthDate;
+    private String imageUrl;
     private List<ArticleDTO> articles;
+    private String createdAt;
+    private String updatedAt;
 
 }

@@ -1,6 +1,7 @@
 package anubis.lab.anubisproject.features.category.entity;
 
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.*;
 
@@ -17,14 +18,14 @@ public class Category {
     private String description;
     private String iconUrl;
     @ManyToMany(mappedBy = "categories")
-    private List<Article> articles;
+    private Set<Article> articles;
     private String createdAt;
     private String updatedAt;
 
     public Category() {
     }
 
-    public Category(Long id, String name, String description, String iconUrl, List<Article> articles, String createdAt, String updatedAt) {
+    public Category(Long id, String name, String description, String iconUrl, Set<Article> articles, String createdAt, String updatedAt) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -66,11 +67,11 @@ public class Category {
         this.iconUrl = iconUrl;
     }
 
-    public List<Article> getArticles() {
+    public Set<Article> getArticles() {
         return articles;
     }
 
-    public void setArticles(List<Article> articles) {
+    public void setArticles(Set<Article> articles) {
         this.articles = articles;
     }
 

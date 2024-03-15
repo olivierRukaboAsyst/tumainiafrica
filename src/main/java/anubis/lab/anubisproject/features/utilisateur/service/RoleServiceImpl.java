@@ -65,6 +65,15 @@ public class RoleServiceImpl implements RoleResolver{
     }
 
     @Override
+    public List<RoleDTO> getRolesByIds(List<Long> ids) {
+        List<Role> roles = roleRepository.findAllById(ids);
+        if (roles.isEmpty()){
+            throw new RuntimeException("Pas des roles enregistrés avec des ids");
+        }
+        return roles.stream().map(r -> mapper.fromRole(r)).collect(Collectors.toList());
+    }
+
+    @Override
     public Boolean deleteRole(Long idRole) {
         getRole(idRole);
         try {

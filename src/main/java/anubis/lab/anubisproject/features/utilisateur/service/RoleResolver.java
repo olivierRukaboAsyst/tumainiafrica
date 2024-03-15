@@ -11,5 +11,6 @@ public interface RoleResolver {
     RoleDTO updateRole(Long idRole, Role role);
     Role getRole(Long idRole);
     List<RoleDTO> getRoles();
+    List<RoleDTO> getRolesByIds(List<Long> ids);
     Boolean deleteRole(Long idRole);
 }

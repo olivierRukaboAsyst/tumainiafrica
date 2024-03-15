@@ -14,15 +14,12 @@ import org.springframework.web.multipart.MultipartFile;
 public interface UtilisateurResolver extends GraphQLQueryResolver, GraphQLMutationResolver {
 
     UtilisateurDTO addUtilisateur(Utilisateur utilisateur, List<Long> idRoles) throws BadRequestExeption, NotFoundException;
-
-    Utilisateur getUtilisateur(Long id);
-
+    UtilisateurDTO getUtilisateur(Long id);
     UtilisateurDTO updateUtilisateur(Long idUtilisateur, Utilisateur utilisateur, List<Role> roles) throws BadRequestExeption;
 
     List<UtilisateurDTO> getAllUtilisateur();
-
+    List<UtilisateurDTO> getAllByIds(List<Long> idUtilisateurs) throws NotFoundException;
     Boolean deleteUtilisateur(Long idUtilisateur);
-
-    public String uploadImage(Long idUser, MultipartFile file);
+    String uploadImage(Long idUser, MultipartFile file);
 
 }

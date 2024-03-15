@@ -2,50 +2,92 @@ package anubis.lab.anubisproject.features.article.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import anubis.lab.anubisproject.features.article.dto.ArticleDTO;
 import anubis.lab.anubisproject.features.article.entity.Article;
 import anubis.lab.anubisproject.features.article.service.ArticleResolver;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
 @RestController
 @RequestMapping("/articles")
 public class ArticleController {
-    private ArticleResolver articleService;
+    private final ArticleResolver articleService;
 
     public ArticleController(ArticleResolver articleService) {
         this.articleService = articleService;
     }
 
     @PostMapping()
-    public ArticleDTO addArticle(@RequestBody Article article, @RequestParam List<Long> idUtilisateurs,
-                                 @RequestParam List<Long> idCategories, @RequestParam List<Long> idTags) {
+    public ResponseEntity<?> addArticle(@RequestBody Article article,
+                                        @RequestParam(value = "utilisateurs") Long idUtilisateur, @RequestParam(value = "categories") List<Long> idCategories,
+                                        @RequestParam(value = "tags") List<Long> idTags) {
         try {
-            return articleService.addArticle(article, idUtilisateurs, idCategories, idTags);
+            return ResponseEntity.ok(this.articleService.addArticle(article, idUtilisateur, idCategories, idTags));
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Echec d'Enregistrement, réessayer"));
+            throw new RuntimeException(e.getMessage());
         }
     }
 
     @PutMapping()
-    public ArticleDTO updateArticle(@PathVariable Long idArticle, @RequestParam List<Long> idCategories, @RequestParam List<Long> tags, @PathVariable Long idUtilisateurs) {
-        return articleService.updateArticle(idArticle, idCategories, tags, idUtilisateurs);
+    public ResponseEntity<?> updateArticle(@RequestBody Article article, @PathVariable Long idArticle, @RequestParam List<Long> idCategories, @RequestParam List<Long> tags, @RequestParam List<Long> idUtilisateurs) {
+        try {
+            return ResponseEntity.ok(this.articleService.updateArticle(article, idArticle, idCategories, tags, idUtilisateurs));
+        }catch (Exception e){
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @GetMapping("/{idArticle}")
-    public Article getArticle(@PathVariable Long idArticle) {
+    public ResponseEntity<?> getArticle(@PathVariable Long idArticle) {
+        try {
+            return ResponseEntity.ok(this.articleService.getArticleById(idArticle));
+        }catch (Exception e){
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+        }
+    }
 
-        return articleService.getArticle(idArticle);
+    @GetMapping("/top")
+    public ResponseEntity<?> getTopArticles(){
+        try {
+            return ResponseEntity.ok(this.articleService.getTopArticles());
+        }catch (Exception e){
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @GetMapping()
-    public List<ArticleDTO> getAllArticles() {
-        return articleService.getAllArticles();
+    public ResponseEntity<?> getAllArticles() {
+        try {
+            return ResponseEntity.ok(this.articleService.getAllArticles());
+        }catch (Exception e){
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/adduser/{idArticle}")
+    public ResponseEntity<?> addUserOnArticle (@PathVariable Long idArticle, @RequestParam Long idUtilisateur){
+        try {
+            return ResponseEntity.ok(this.articleService.addUserOnArticle(idArticle, idUtilisateur));
+        }catch (Exception e){
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    @PutMapping("/changestatus/{idArticle}")
+    public ResponseEntity<?> chandeArticleStatus(@PathVariable Long idArticle, @RequestParam Boolean isPublished){
+        try {
+            return ResponseEntity.ok(articleService.changeArticleStatus(idArticle, isPublished));
+        }catch (Exception e){
+            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @DeleteMapping()
     public Boolean deleteArticle(@PathVariable Long idArticle) {
-        return articleService.deleteArticle(idArticle);
+        return this.articleService.deleteArticle(idArticle);
     }
 
 }

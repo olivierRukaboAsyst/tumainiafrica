@@ -58,6 +58,15 @@ public class RoleController {
         }
     }
 
+    @GetMapping("/rolesByIds")
+    public ResponseEntity getRolesByIds(@RequestParam List<Long> ids){
+        try {
+            return ResponseEntity.ok(roleResolver.getRolesByIds(ids));
+        }catch (Exception e){
+            return ResponseEntity.status(NOT_FOUND).body(new ErrorEntity(null, e.getMessage()));
+        }
+    }
+
     @DeleteMapping
     Boolean deleteRole(Long idRole){
         return roleResolver.deleteRole(idRole);

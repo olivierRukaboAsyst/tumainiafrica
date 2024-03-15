@@ -42,6 +42,15 @@ public class UserController {
         }
     }
 
+    @GetMapping("/usersByIds")
+    public ResponseEntity<?> getUtilisateursByIds(@RequestParam(value = "users", required = false) List<Long> list){
+        try {
+            return ResponseEntity.ok(utilisateurService.getAllByIds(list));
+        }catch (Exception e){
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+        }
+    }
+
     @GetMapping
     public ResponseEntity<?> getAllUtilisateur() {
         try {
@@ -52,8 +61,8 @@ public class UserController {
 
     }
 
-    @PutMapping
-    public ResponseEntity updateUtilisateur(@PathVariable Long idUtilisateur, @RequestParam List<Role> roles, @RequestBody Utilisateur utilisateur) {
+    @PutMapping("/{idUtilisateur}")
+    public ResponseEntity updateUtilisateur(@PathVariable Long idUtilisateur, @RequestParam(required = false, name = "roles") List<Role> roles, @RequestBody Utilisateur utilisateur) {
         try {
             return ResponseEntity.ok(utilisateurService.updateUtilisateur(idUtilisateur,
                     utilisateur, roles));

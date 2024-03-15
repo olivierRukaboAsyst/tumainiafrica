@@ -3,6 +3,8 @@ package anubis.lab.anubisproject.features.comment.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import anubis.lab.anubisproject.features.article.dto.ArticleDTO;
+import anubis.lab.anubisproject.features.article.mapper.ArticleMapper;
 import anubis.lab.anubisproject.helpers.Constant;
 import org.springframework.stereotype.Service;
 
@@ -23,17 +25,21 @@ public class CommentServiceImpl implements CommentService {
     private final ArticleResolver articleResolver;
     private final CustomerService customerService;
     private final CommentMapper mapper;
+    private final ArticleMapper userMapper;
 
-    public CommentServiceImpl(CommentRepository commentRepository, ArticleResolver articleResolver, CustomerService customerService, CommentMapper mapper) {
+    public CommentServiceImpl(CommentRepository commentRepository, ArticleResolver articleResolver, CustomerService customerService,
+                              CommentMapper mapper, ArticleMapper userMapper) {
         this.commentRepository = commentRepository;
         this.articleResolver = articleResolver;
         this.customerService = customerService;
         this.mapper = mapper;
+        this.userMapper = userMapper;
     }
 
     @Override
     public CommentDTO addComment(Comment comment, Long idArticle, String idCustomer) {
-        Article article = this.articleResolver.getArticle(idArticle);
+        ArticleDTO articleDTO = this.articleResolver.getArticle(idArticle);
+        Article article = userMapper.fromArticleDTO(articleDTO);
         Customer customer = this.customerService.getCustomer(idCustomer);
         try {
             if (idArticle == null | idCustomer == null | comment.getContent() == null){
@@ -59,7 +65,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDTO updateComment(Long idComment, Long idArticle, String idCustomer, Comment requestComment) {
         Comment comment = getComment(idComment);
-        Article article = articleResolver.getArticle(idArticle);
+        ArticleDTO articleDTO = this.articleResolver.getArticle(idArticle);
+        Article article = userMapper.fromArticleDTO(articleDTO);
         Customer customer = customerService.getCustomer(idCustomer);
         try {
             if (comment != null) {

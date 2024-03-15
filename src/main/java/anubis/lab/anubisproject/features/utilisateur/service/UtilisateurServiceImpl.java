@@ -76,8 +76,9 @@ public class UtilisateurServiceImpl implements UtilisateurResolver {
     @Override
     public UtilisateurDTO updateUtilisateur(Long idUtilisateur, Utilisateur requestUtilisateur, List<Role> roles) throws BadRequestExeption {
 
-        Utilisateur utilisateur = getUtilisateur(idUtilisateur);
-        try {
+        UtilisateurDTO utilisateurDTO = getUtilisateur(idUtilisateur);
+        Utilisateur utilisateur = mapper.fromUtilisateurDTO(utilisateurDTO);
+//        try {
             if (requestUtilisateur != null) {
                 if (Objects.nonNull(requestUtilisateur.getFirstname())){
                     utilisateur.setFirstname(requestUtilisateur.getFirstname());
@@ -103,17 +104,22 @@ public class UtilisateurServiceImpl implements UtilisateurResolver {
                 if (Objects.nonNull(requestUtilisateur.getBirthDate())){
                     utilisateur.setBirthDate(requestUtilisateur.getBirthDate());
                 }
-                if (!(requestUtilisateur.getRoles().isEmpty())){
+                if ( requestUtilisateur.getRoles() == null | !(requestUtilisateur.getRoles().isEmpty())){
                     utilisateur.setRoles(requestUtilisateur.getRoles());
+                }else {
+//                    List<Long> ids = new ArrayList<>();
+//                    for (requestUtilisateur.getRoles(): roles)
+//                    List<Role> roleList = roleRepository.findAllById(ids);
+//                    utilisateur.setRoles();
                 }
 
             }
             utilisateur.setUpdatedAt(new Constant().dateFormated());
             Utilisateur savedUtilisateur = utilisateurRepository.save(utilisateur);
             return mapper.fromUtilisateur(savedUtilisateur);
-        } catch (Exception e) {
-            throw new BadRequestExeption("Erreur lors de la modification");
-        }
+//        } catch (Exception e) {
+//            throw new BadRequestExeption("Erreur lors de la modification");
+//        }
     }
 
     @Override
@@ -128,10 +134,23 @@ public class UtilisateurServiceImpl implements UtilisateurResolver {
     }
 
     @Override
-    public Utilisateur getUtilisateur(Long idUtilisateur) {
+    public List<UtilisateurDTO> getAllByIds(List<Long> idUtilisateurs) throws NotFoundException {
+        if (idUtilisateurs == null || idUtilisateurs.isEmpty()){
+                throw new NotFoundException("Il y a une erreur au niveau des ids");
+        }
+        try {
+            List<Utilisateur> utilisateurs = utilisateurRepository.findAllById(idUtilisateurs);
+            return utilisateurs.stream().map(u -> mapper.fromUtilisateur(u)).collect(Collectors.toList());
+        }catch (Exception e){
+            throw new NotFoundException("Aucun utilisateur a ete trouve avec ces ids");
+        }
+    }
+
+    @Override
+    public UtilisateurDTO getUtilisateur(Long idUtilisateur) {
         Utilisateur utilisateur = utilisateurRepository.findById(idUtilisateur)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Cet utilisateur n'existe pas")));
-        return utilisateur;
+        return mapper.fromUtilisateur(utilisateur);
     }
 
     @Override
@@ -146,12 +165,12 @@ public class UtilisateurServiceImpl implements UtilisateurResolver {
     public String uploadImage(Long idUser, MultipartFile file) {
         try {
             log.info("Téléchargement de l'image ID: {}", idUser);
-            Utilisateur utilisateur = getUtilisateur(idUser);
-            utilisateur.setUpdatedAt(new Constant().dateFormated());
+            UtilisateurDTO utilisateurDTO = getUtilisateur(idUser);
+            utilisateurDTO.setUpdatedAt(new Constant().dateFormated());
             String imageUrl = photoFunction.apply(idUser, file);
-            utilisateur.setImageUrl(imageUrl);
+            utilisateurDTO.setImageUrl(imageUrl);
 
-            utilisateurRepository.save(utilisateur);
+            utilisateurRepository.save(mapper.fromUtilisateurDTO(utilisateurDTO));
             log.info("Image sauvergardee");
             return imageUrl;
         }catch (Exception e){

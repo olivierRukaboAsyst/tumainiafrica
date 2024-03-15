@@ -1,8 +1,12 @@
 package anubis.lab.anubisproject.features.article.entity;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import anubis.lab.anubisproject.features.tag.entity.Tag;
+import anubis.lab.anubisproject.features.utilisateur.entity.UtilisateurRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import anubis.lab.anubisproject.features.category.entity.Category;
@@ -20,14 +24,19 @@ public class Article {
     private String title;
     @Column(columnDefinition = "TEXT")
     private String content;
-    private Boolean isPublished;
-    private Boolean isFrontPage = false;
+    private int views;
+    private boolean isPublished;
+    private boolean isFrontPage;
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Utilisateur> utilisateurs;
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<Category> categories;
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "articles")
-    private List<Tag> tags;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "categorie_article", joinColumns = @JoinColumn(name = "article_id", referencedColumnName = "id"),
+                inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id"))
+    private Set<Category> categories;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "tag_article", joinColumns = @JoinColumn(name = "article_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "idTag"))
+    private Set<Tag> tags;
     @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
     private String createdAt;
@@ -36,10 +45,11 @@ public class Article {
     public Article() {
     }
 
-    public Article(Long id, String title, String content, Boolean isPublished, Boolean isFrontPage, List<Utilisateur> utilisateurs, List<Category> categories, List<Tag> tags, List<Comment> comments, String createdAt, String updatedAt) {
+    public Article(Long id, String title, String content, int views, boolean isPublished, boolean isFrontPage, List<Utilisateur> utilisateurs, Set<Category> categories, Set<Tag> tags, List<Comment> comments, String createdAt, String updatedAt) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.views = views;
         this.isPublished = isPublished;
         this.isFrontPage = isFrontPage;
         this.utilisateurs = utilisateurs;
@@ -74,19 +84,27 @@ public class Article {
         this.content = content;
     }
 
-    public Boolean getPublished() {
+    public int getViews() {
+        return views;
+    }
+
+    public void setViews(int views) {
+        this.views = views;
+    }
+
+    public boolean isPublished() {
         return isPublished;
     }
 
-    public void setPublished(Boolean published) {
+    public void setPublished(boolean published) {
         isPublished = published;
     }
 
-    public Boolean getFrontPage() {
+    public boolean isFrontPage() {
         return isFrontPage;
     }
 
-    public void setFrontPage(Boolean frontPage) {
+    public void setFrontPage(boolean frontPage) {
         isFrontPage = frontPage;
     }
 
@@ -98,19 +116,19 @@ public class Article {
         this.utilisateurs = utilisateurs;
     }
 
-    public List<Category> getCategories() {
+    public Set<Category> getCategories() {
         return categories;
     }
 
-    public void setCategories(List<Category> categories) {
+    public void setCategories(Set<Category> categories) {
         this.categories = categories;
     }
 
-    public List<Tag> getTags() {
+    public Set<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(Set<Tag> tags) {
         this.tags = tags;
     }
 
@@ -144,6 +162,7 @@ public class Article {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
+                ", views=" + views +
                 ", isPublished=" + isPublished +
                 ", isFrontPage=" + isFrontPage +
                 ", utilisateurs=" + utilisateurs +
