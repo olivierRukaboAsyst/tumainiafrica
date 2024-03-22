@@ -4,6 +4,7 @@ import anubis.lab.anubisproject.features.category.dto.CategoryDTO;
 import anubis.lab.anubisproject.features.comment.dto.CommentDTO;
 import anubis.lab.anubisproject.features.tag.dto.TagDTO;
 import anubis.lab.anubisproject.features.utilisateur.dto.UtilisateurDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.List;
 import java.util.Set;
@@ -13,14 +14,22 @@ public class ResponseArticleDTO {
     private String title;
     private String content;
     private int views;
+    private int reactionsNumber;
+    private int numberOflike;
+    private int numberOfLaugh;
+    private int numberOfDislike;
+    private int commentNumber;
     private boolean isPublished;
     private boolean isFrontPage;
     private Set<CategoryDTO> categories;
     private List<UtilisateurDTO> utilisateurs;
     private List<TagDTO> tags;
     private List<CommentDTO> comments;
+    @JsonIgnore
+    private List<ReactionDTO> reactions;
     private String createdAt;
     private String updatedAt;
+
 
     public Long getId() {
         return id;
@@ -116,5 +125,53 @@ public class ResponseArticleDTO {
 
     public void setComments(List<CommentDTO> comments) {
         this.comments = comments;
+    }
+
+    public int getReactionsNumber() {
+        return reactionsNumber;
+    }
+
+    public void setReactionsNumber(int reactionsNumber) {
+        this.reactionsNumber = reactionsNumber;
+    }
+
+    public int getCommentNumber() {
+        return commentNumber;
+    }
+
+    public void setCommentNumber(int commentNumber) {
+        this.commentNumber = commentNumber;
+    }
+
+    public List<ReactionDTO> getReactions() {
+        return reactions;
+    }
+
+    public void setReactions(List<ReactionDTO> reactions) {
+        this.reactions = reactions;
+    }
+
+    public int getNumberOflike() {
+        return numberOflike;
+    }
+
+    public void setNumberOflike(int numberOflike) {
+        this.numberOflike = numberOflike;
+    }
+
+    public int getNumberOfLaugh() {
+        return numberOfLaugh;
+    }
+
+    public void setNumberOfLaugh(int numberOfLaugh) {
+        this.numberOfLaugh = numberOfLaugh;
+    }
+
+    public int getNumberOfDislike() {
+        return numberOfDislike;
+    }
+
+    public void setNumberOfDislike(int numberOfDislike) {
+        this.numberOfDislike = numberOfDislike;
     }
 }

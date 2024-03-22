@@ -2,17 +2,13 @@ package anubis.lab.anubisproject.features.comment.entity;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import anubis.lab.anubisproject.features.article.entity.Article;
 import anubis.lab.anubisproject.features.customer.entity.Customer;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,9 +22,13 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String content;
+    @Transient
+    private String customerName;
+    private boolean isDisplay;
     @ManyToOne(fetch = FetchType.LAZY)
     private Article article;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Customer customer;
     private String createdAt;
     private String updatedAt;
@@ -36,9 +36,11 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(Long id, String content, Article article, Customer customer, String createdAt, String updatedAt) {
+    public Comment(Long id, String content, String customerName, boolean isDisplay, Article article, Customer customer, String createdAt, String updatedAt) {
         this.id = id;
         this.content = content;
+        this.customerName = customerName;
+        this.isDisplay = isDisplay;
         this.article = article;
         this.customer = customer;
         this.createdAt = createdAt;
@@ -89,6 +91,22 @@ public class Comment {
         return updatedAt;
     }
 
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public boolean isDisplay() {
+        return isDisplay;
+    }
+
+    public void setDisplay(boolean display) {
+        isDisplay = display;
+    }
+
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
     }
@@ -98,6 +116,8 @@ public class Comment {
         return "Comment{" +
                 "id=" + id +
                 ", content='" + content + '\'' +
+                ", customerName='" + customerName + '\'' +
+                ", isDisplay=" + isDisplay +
                 ", article=" + article +
                 ", customer=" + customer +
                 ", createdAt='" + createdAt + '\'' +

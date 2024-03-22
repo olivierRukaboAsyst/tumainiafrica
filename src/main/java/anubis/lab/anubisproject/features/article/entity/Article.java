@@ -39,13 +39,16 @@ public class Article {
     private Set<Tag> tags;
     @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
+    @OneToMany(mappedBy = "article")
+    @JsonIgnore
+    private List<Reaction> reactions;
     private String createdAt;
     private String updatedAt;
 
     public Article() {
     }
 
-    public Article(Long id, String title, String content, int views, boolean isPublished, boolean isFrontPage, List<Utilisateur> utilisateurs, Set<Category> categories, Set<Tag> tags, List<Comment> comments, String createdAt, String updatedAt) {
+    public Article(Long id, String title, String content, int views, boolean isPublished, boolean isFrontPage, List<Utilisateur> utilisateurs, Set<Category> categories, Set<Tag> tags, List<Comment> comments, List<Reaction> reactions, String createdAt, String updatedAt) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -56,6 +59,7 @@ public class Article {
         this.categories = categories;
         this.tags = tags;
         this.comments = comments;
+        this.reactions = reactions;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -140,6 +144,14 @@ public class Article {
         this.comments = comments;
     }
 
+    public List<Reaction> getReactions() {
+        return reactions;
+    }
+
+    public void setReactions(List<Reaction> reactions) {
+        this.reactions = reactions;
+    }
+
     public String getCreatedAt() {
         return createdAt;
     }
@@ -169,6 +181,7 @@ public class Article {
                 ", categories=" + categories +
                 ", tags=" + tags +
                 ", comments=" + comments +
+                ", reactions=" + reactions +
                 ", createdAt='" + createdAt + '\'' +
                 ", updatedAt='" + updatedAt + '\'' +
                 '}';

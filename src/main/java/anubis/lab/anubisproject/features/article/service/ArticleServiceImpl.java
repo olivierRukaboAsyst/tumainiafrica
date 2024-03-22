@@ -6,8 +6,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import anubis.lab.anubisproject.exceptions.BadRequestExeption;
+import anubis.lab.anubisproject.exceptions.ErrorEntity;
 import anubis.lab.anubisproject.exceptions.NotFoundException;
+import anubis.lab.anubisproject.features.article.dto.ReactionDTO;
 import anubis.lab.anubisproject.features.article.dto.ResponseArticleDTO;
+import anubis.lab.anubisproject.features.article.entity.Reaction;
+import anubis.lab.anubisproject.features.article.mapper.ReactionMapper;
+import anubis.lab.anubisproject.features.article.repository.ReactionRepository;
 import anubis.lab.anubisproject.features.category.dto.CategoryDTO;
 import anubis.lab.anubisproject.features.category.mapper.CategoryMapper;
 import anubis.lab.anubisproject.features.category.repository.CategoryRepository;
@@ -32,6 +37,8 @@ import anubis.lab.anubisproject.features.article.mapper.ArticleMapper;
 import anubis.lab.anubisproject.features.article.repository.ArticleRepository;
 import anubis.lab.anubisproject.features.category.entity.Category;
 import anubis.lab.anubisproject.features.utilisateur.entity.Utilisateur;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @Slf4j
@@ -42,27 +49,23 @@ public class ArticleServiceImpl implements ArticleResolver {
     private final UtilisateurResolver utilisateurService;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
-    private final CategoryService categoryService;
-    private final TagService tagService;
     private final ArticleMapper mapper;
-    private final CategoryMapper catMapper;
     private final UtilisateurMapper userMapper;
-    private final TagMapper tagMapper;
+    private final ReactionRepository reactionRepository;
+    private ReactionMapper reactMapper;
 
     public ArticleServiceImpl(ArticleRepository articleRepository, UtilisateurRepository utilisateurRepository, UtilisateurResolver utilisateurService,
-                              CategoryRepository categoryRepository, TagRepository tagRepository, ArticleMapper mapper,
-                              CategoryMapper catMapper, UtilisateurMapper userMapper, TagMapper tagMapper, CategoryService categoryService, TagService tagService) {
+                              CategoryRepository categoryRepository, TagRepository tagRepository, ArticleMapper mapper, UtilisateurMapper userMapper,
+                              ReactionRepository reactionRepository, ReactionMapper reactMapper) {
         this.articleRepository = articleRepository;
         this.utilisateurService = utilisateurService;
         this.utilisateurRepository = utilisateurRepository;
         this.categoryRepository = categoryRepository;
         this.tagRepository = tagRepository;
         this.mapper = mapper;
-        this.catMapper = catMapper;
         this.userMapper = userMapper;
-        this.tagMapper = tagMapper;
-        this.categoryService = categoryService;
-        this.tagService = tagService;
+        this.reactionRepository = reactionRepository;
+        this.reactMapper = reactMapper;
     }
 
     @Override
@@ -196,6 +199,18 @@ public class ArticleServiceImpl implements ArticleResolver {
         Article savedArticle = articleRepository.save(mapper.fromArticleDTO(article));
 
         return mapper.fromArticleReduced(savedArticle);
+    }
+
+    @Override
+    public ReactionDTO addReaction(Long idArticle, Reaction reaction) throws NotFoundException {
+        Optional<Article> articleOptional = articleRepository.findById(idArticle);
+        if (articleOptional.isEmpty()){
+            throw new NotFoundException("L'Article dont vous reagissez n'est pas disponible");
+        }
+        Article article = articleOptional.get();
+        reaction.setArticle(article);
+        reaction.setCreatedAt(new Constant().dateFormated());
+        return reactMapper.fromReaction(reactionRepository.save(reaction));
     }
 
 

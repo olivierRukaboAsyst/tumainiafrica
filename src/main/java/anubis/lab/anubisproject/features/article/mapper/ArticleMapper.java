@@ -1,11 +1,17 @@
 package anubis.lab.anubisproject.features.article.mapper;
 
+import anubis.lab.anubisproject.features.article.dto.ReactionDTO;
 import anubis.lab.anubisproject.features.article.dto.ResponseArticleDTO;
+import anubis.lab.anubisproject.features.article.entity.Reaction;
 import anubis.lab.anubisproject.features.article.repository.ArticleRepository;
+import anubis.lab.anubisproject.features.article.repository.ReactionRepository;
 import anubis.lab.anubisproject.features.category.dto.CategoryDTO;
 import anubis.lab.anubisproject.features.category.entity.Category;
 import anubis.lab.anubisproject.features.category.mapper.CategoryMapper;
 import anubis.lab.anubisproject.features.category.repository.CategoryRepository;
+import anubis.lab.anubisproject.features.comment.entity.Comment;
+import anubis.lab.anubisproject.features.comment.mapper.CommentMapper;
+import anubis.lab.anubisproject.features.comment.repository.CommentRepository;
 import anubis.lab.anubisproject.features.tag.Repository.TagRepository;
 import anubis.lab.anubisproject.features.tag.dto.TagDTO;
 import anubis.lab.anubisproject.features.tag.entity.Tag;
@@ -30,23 +36,31 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ArticleMapper {
 
-    final private ArticleRepository articleRepository;
     final private UtilisateurRepository utilisateurRepository;
     final private CategoryRepository categoryRepository;
     final private TagRepository tagRepository;
+    final private CommentRepository commentRepository;
     final private UtilisateurMapper userMapper;
     final private CategoryMapper catMapper;
     final private TagMapper tagMapper;
+    final private CommentMapper commentMapper;
+    final private ReactionRepository reactionRepository;
+    final private ReactionMapper reactMapper;
 
-    public ArticleMapper(ArticleRepository articleRepository, UtilisateurRepository utilisateurRepository, CategoryRepository categoryRepository, TagRepository tagRepository,
-                         UtilisateurMapper userMapper, CategoryMapper catMapper, TagMapper tagMapper) {
-        this.articleRepository = articleRepository;
+
+    public ArticleMapper(UtilisateurRepository utilisateurRepository, CategoryRepository categoryRepository, TagRepository tagRepository,
+                         CommentRepository commentRepository, UtilisateurMapper userMapper, CategoryMapper catMapper, TagMapper tagMapper,
+                         CommentMapper commentMapper, ReactionRepository reactionRepository, ReactionMapper reactMapper) {
         this.utilisateurRepository = utilisateurRepository;
         this.categoryRepository = categoryRepository;
         this.tagRepository = tagRepository;
+        this.commentRepository = commentRepository;
         this.userMapper = userMapper;
         this.catMapper = catMapper;
         this.tagMapper = tagMapper;
+        this.commentMapper = commentMapper;
+        this.reactionRepository = reactionRepository;
+        this.reactMapper = reactMapper;
     }
 
     public ArticleDTO fromArticle(Article article, List<Category> categories, List<Tag> tagList){
@@ -94,6 +108,21 @@ public class ArticleMapper {
         List<Tag> tagList = tagRepository.findAllById(idTags);
         articleDTO.setTags(tagList.stream().map(tagMapper::fromTag).toList());
 
+
+        List<Long> idComments = new ArrayList<>();
+        for(Comment comment: article.getComments()){
+            Optional<Comment> optionalComment = commentRepository.findById(comment.getId());
+            optionalComment.ifPresent(c-> idComments.add(c.getId()));
+        }
+        List<Comment> commentList = commentRepository.findAllById(idComments);
+        articleDTO.setComments(commentList.stream().map(commentMapper::fromCommentDTO).toList());
+        articleDTO.setCommentNumber(commentList.size());
+
+        List<Reaction> reactions = reactionRepository.findAllByArticleId(article.getId());
+        articleDTO.setReactionsNumber(reactions.size());
+        articleDTO.setNumberOflike(reactionRepository.getTotalLikes(article.getId()));
+        articleDTO.setNumberOfLaugh(reactionRepository.getTotalLaughs(article.getId()));
+        articleDTO.setNumberOfDislike(reactionRepository.getTotalDisLikes(article.getId()));
         BeanUtils.copyProperties(article, articleDTO);
 
         return articleDTO;

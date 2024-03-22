@@ -2,6 +2,7 @@ package anubis.lab.anubisproject.features.article.controller;
 
 import java.util.List;
 
+import anubis.lab.anubisproject.features.article.entity.Reaction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,8 +10,7 @@ import anubis.lab.anubisproject.features.article.dto.ArticleDTO;
 import anubis.lab.anubisproject.features.article.entity.Article;
 import anubis.lab.anubisproject.features.article.service.ArticleResolver;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/articles")
@@ -83,6 +83,14 @@ public class ArticleController {
             return ResponseEntity.ok(articleService.changeArticleStatus(idArticle, isPublished));
         }catch (Exception e){
             return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    @PostMapping("/{idArticle}/react")
+    public ResponseEntity<?> addReaction(@PathVariable Long idArticle, @RequestBody Reaction reaction){
+        try {
+            return ResponseEntity.ok(articleService.addReaction(idArticle, reaction));
+        }catch (Exception e){
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

@@ -25,8 +25,7 @@ public class CommentControlleur {
     @GetMapping("/{idComment}")
     public ResponseEntity<?> getComment(@PathVariable Long idComment) {
         try {
-            Comment comment = commentService.getComment(idComment);
-            return ResponseEntity.ok(comment);
+            return ResponseEntity.ok(commentService.getComment(idComment));
         }catch (Exception e){
             return ResponseEntity.status(NOT_FOUND).body(new ErrorEntity(null, e.getMessage()));
         }
@@ -51,7 +50,7 @@ public class CommentControlleur {
     }
 
     @PutMapping("/{idComment}")
-    public ResponseEntity<?> updateComment(@PathVariable Long idComment, @RequestParam Long idArticle, @RequestParam String idCustomer,
+    public ResponseEntity<?> updateComment(@PathVariable Long idComment, @RequestParam(value = "article") Long idArticle, @RequestParam(value = "customer") String idCustomer,
             @RequestBody Comment comment) {
         try {
             return ResponseEntity.ok(commentService.updateComment(idComment, idArticle, idCustomer, comment));

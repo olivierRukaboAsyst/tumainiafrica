@@ -1,6 +1,7 @@
 package anubis.lab.anubisproject.features.comment.service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import anubis.lab.anubisproject.features.article.dto.ArticleDTO;
@@ -48,6 +49,7 @@ public class CommentServiceImpl implements CommentService {
                 comment.setArticle(article);
                 comment.setCustomer(customer);
             }
+            comment.setDisplay(true);
             comment.setCreatedAt(new Constant().dateFormated());
             Comment savedComment = commentRepository.save(comment);
             return mapper.fromCommentDTO(savedComment);
@@ -57,14 +59,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment getComment(Long idComment) {
-        return commentRepository.findById(idComment)
-                .orElseThrow(() -> new RuntimeException("Ce commentaire n'existe pas"));
+    public CommentDTO getComment(Long idComment) {
+        return mapper.fromCommentDTO(commentRepository.findById(idComment)
+                .orElseThrow(() -> new RuntimeException("Ce commentaire n'existe pas")));
     }
 
     @Override
     public CommentDTO updateComment(Long idComment, Long idArticle, String idCustomer, Comment requestComment) {
-        Comment comment = getComment(idComment);
+        Comment comment = this.commentRepository.findById(idComment).orElseThrow(() -> new RuntimeException("Ce commentaire n'existe pas"));
         ArticleDTO articleDTO = this.articleResolver.getArticle(idArticle);
         Article article = userMapper.fromArticleDTO(articleDTO);
         Customer customer = customerService.getCustomer(idCustomer);
@@ -78,6 +80,9 @@ public class CommentServiceImpl implements CommentService {
                 }
                 if (requestComment.getContent() != null) {
                     comment.setContent(requestComment.getContent());
+                }
+                if (Objects.nonNull(requestComment.isDisplay())){
+                    comment.setDisplay(requestComment.isDisplay());
                 }
             }
             assert comment != null;

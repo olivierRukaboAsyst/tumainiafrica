@@ -1,5 +1,6 @@
 package anubis.lab.anubisproject.features.customer.mapper;
 
+import anubis.lab.anubisproject.features.customer.dto.CustomerToArticleDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +22,12 @@ public class CustomerMapper {
         BeanUtils.copyProperties(customerDTO, customer);
 
         return customer;
+    }
+
+    public CustomerToArticleDTO fromCustomerArticle(Customer customer){
+        CustomerToArticleDTO c = new CustomerToArticleDTO();
+        BeanUtils.copyProperties(customer, c);
+
+        return c;
     }
 }
