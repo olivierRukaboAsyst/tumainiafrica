@@ -6,6 +6,7 @@ import java.util.Set;
 import anubis.lab.anubisproject.features.category.dto.CategoryDTO;
 import anubis.lab.anubisproject.features.tag.dto.TagDTO;
 import anubis.lab.anubisproject.features.utilisateur.dto.UtilisateurDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class ArticleDTO {
 
@@ -15,8 +16,11 @@ public class ArticleDTO {
     private int views;
     private boolean isPublished;
     private boolean isFrontPage;
+    @JsonIgnore
     private Set<CategoryDTO> categories;
+    @JsonIgnore
     private List<UtilisateurDTO> utilisateurs;
+    @JsonIgnore
     private List<TagDTO> tags;
     private String createdAt;
     private String updatedAt;

@@ -80,6 +80,7 @@ public class CommentServiceImpl implements CommentService {
                     comment.setContent(requestComment.getContent());
                 }
             }
+            assert comment != null;
             comment.setUpdatedAt(new Constant().dateFormated());
 
             Comment savedComment = commentRepository.save(comment);

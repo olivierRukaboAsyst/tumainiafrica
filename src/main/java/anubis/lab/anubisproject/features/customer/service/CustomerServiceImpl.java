@@ -1,6 +1,5 @@
 package anubis.lab.anubisproject.features.customer.service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,11 +12,15 @@ import anubis.lab.anubisproject.features.customer.repository.CustomerRepository;
 import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
 
     private CustomerRepository customerRepository;
     private CustomerMapper mapper;
+
+    public CustomerServiceImpl(CustomerRepository customerRepository, CustomerMapper mapper) {
+        this.customerRepository = customerRepository;
+        this.mapper = mapper;
+    }
 
     @Override
     public CustomerDTO addCustomer(Customer customer) {

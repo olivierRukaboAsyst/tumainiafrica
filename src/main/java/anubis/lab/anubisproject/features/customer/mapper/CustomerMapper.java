@@ -10,7 +10,7 @@ import anubis.lab.anubisproject.features.customer.entity.Customer;
 public class CustomerMapper {
     
     public CustomerDTO fromCustomer(Customer customer){
-        CustomerDTO customerDTO = new CustomerDTO(customer.getId(), customer.getFullname(), customer.getEmail(), customer.getPhoneNumber());
+        CustomerDTO customerDTO = new CustomerDTO();
         BeanUtils.copyProperties(customer, customerDTO);
 
         return customerDTO;

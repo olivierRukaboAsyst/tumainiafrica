@@ -68,8 +68,15 @@ public class TagServiceImpl implements TagService {
         if (tags.isEmpty()){
             throw new RuntimeException(String.format("Pas des tags enregistres"));
         }
-        List<TagDTO> tagDTOS = tags.stream().map(t -> mapper.fromTag(t)).collect(Collectors.toList());
-        return tagDTOS;
+        return tags.stream().map(t -> mapper.fromTag(t)).collect(Collectors.toList());
+    }
+    @Override
+    public List<TagDTO> getAllTagsByIds(List<Long> ids){
+        List<Tag> tags = tagRepository.findAllById(ids);
+        if (tags.isEmpty()){
+            throw new RuntimeException(String.format("Pas des tags avec des ids"));
+        }
+        return tags.stream().map(t -> mapper.fromTag(t)).collect(Collectors.toList());
     }
     @Override
     public Boolean deleteTag(Long idTag) {

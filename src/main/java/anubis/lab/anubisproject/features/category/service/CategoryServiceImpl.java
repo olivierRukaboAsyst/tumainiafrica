@@ -65,6 +65,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<CategoryDTO> getAllCategoriesByIds(List<Long> idCategories) {
+        List<Category> categories = categoryRepository.findAllById(idCategories);
+        if (categories.isEmpty()) {
+            throw new RuntimeException(String.format("Pas des categories avec ces ids"));
+        }
+        List<CategoryDTO> categoryDTO = categories.stream().map(c -> mapper.fromCategory(c))
+                .collect(Collectors.toList());
+        return categoryDTO;
+    }
+
+    @Override
     public Boolean deleteCategory(Long idCategory) {
         getCategory(idCategory);
         categoryRepository.deleteById(idCategory);

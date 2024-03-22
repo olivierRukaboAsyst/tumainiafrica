@@ -32,10 +32,11 @@ public class ArticleController {
         }
     }
 
-    @PutMapping()
-    public ResponseEntity<?> updateArticle(@RequestBody Article article, @PathVariable Long idArticle, @RequestParam List<Long> idCategories, @RequestParam List<Long> tags, @RequestParam List<Long> idUtilisateurs) {
+    @PutMapping("/{idArticle}")
+    public ResponseEntity<?> updateArticle(@RequestBody Article article, @PathVariable Long idArticle, @RequestParam(value = "categories", required = false) List<Long> idCategories,
+                                           @RequestParam(value = "tags", required = false) List<Long> tags, @RequestParam(value = "utilisateurs", required = false) List<Long> idUtilisateurs) {
         try {
-            return ResponseEntity.ok(this.articleService.updateArticle(article, idArticle, idCategories, tags, idUtilisateurs));
+            return ResponseEntity.ok(this.articleService.updateArticle(article, idArticle, idCategories, tags));
         }catch (Exception e){
             return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
         }
@@ -68,10 +69,10 @@ public class ArticleController {
         }
     }
 
-    @PutMapping("/adduser/{idArticle}")
-    public ResponseEntity<?> addUserOnArticle (@PathVariable Long idArticle, @RequestParam Long idUtilisateur){
+    @PutMapping("adduser/{idArticle}")
+    public ResponseEntity<?> addUserOnArticle (@PathVariable Long idArticle, @RequestParam(name = "utilisateur") List<Long> idUtilisateurs){
         try {
-            return ResponseEntity.ok(this.articleService.addUserOnArticle(idArticle, idUtilisateur));
+            return ResponseEntity.ok(this.articleService.addUserOnArticle(idArticle, idUtilisateurs));
         }catch (Exception e){
             return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
         }

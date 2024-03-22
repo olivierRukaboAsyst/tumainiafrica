@@ -32,7 +32,6 @@ public class CommentControlleur {
         }
 
     }
-
     @GetMapping
     public ResponseEntity<?> getAllComments() {
         try {
@@ -42,9 +41,8 @@ public class CommentControlleur {
             return ResponseEntity.status(NOT_FOUND).body(new ErrorEntity(null, e.getMessage()));
         }
     }
-
     @PostMapping()
-    public ResponseEntity<?> addComment(@RequestBody Comment comment, @RequestParam Long idArticle, @RequestParam String idCustomer) {
+    public ResponseEntity<?> addComment(@RequestBody Comment comment, @RequestParam(value = "article") Long idArticle, @RequestParam(value = "customer") String idCustomer) {
         try {
             return ResponseEntity.ok(commentService.addComment(comment, idArticle, idCustomer));
         }catch (Exception e){

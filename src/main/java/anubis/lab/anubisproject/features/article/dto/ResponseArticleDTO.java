@@ -1,6 +1,7 @@
 package anubis.lab.anubisproject.features.article.dto;
 
 import anubis.lab.anubisproject.features.category.dto.CategoryDTO;
+import anubis.lab.anubisproject.features.comment.dto.CommentDTO;
 import anubis.lab.anubisproject.features.tag.dto.TagDTO;
 import anubis.lab.anubisproject.features.utilisateur.dto.UtilisateurDTO;
 
@@ -11,11 +12,13 @@ public class ResponseArticleDTO {
     private Long id;
     private String title;
     private String content;
+    private int views;
     private boolean isPublished;
     private boolean isFrontPage;
     private Set<CategoryDTO> categories;
     private List<UtilisateurDTO> utilisateurs;
     private List<TagDTO> tags;
+    private List<CommentDTO> comments;
     private String createdAt;
     private String updatedAt;
 
@@ -41,6 +44,14 @@ public class ResponseArticleDTO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public int getViews() {
+        return views;
+    }
+
+    public void setViews(int views) {
+        this.views = views;
     }
 
     public boolean isPublished() {
@@ -97,5 +108,13 @@ public class ResponseArticleDTO {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<CommentDTO> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentDTO> comments) {
+        this.comments = comments;
     }
 }

@@ -3,9 +3,6 @@ package anubis.lab.anubisproject.features.utilisateur.mapper;
 import anubis.lab.anubisproject.features.utilisateur.dto.RoleDTO;
 import anubis.lab.anubisproject.features.utilisateur.entity.Role;
 import anubis.lab.anubisproject.features.utilisateur.repository.RoleRepository;
-import anubis.lab.anubisproject.features.utilisateur.repository.UtilisateurRepository;
-import anubis.lab.anubisproject.features.utilisateur.service.RoleResolver;
-import anubis.lab.anubisproject.features.utilisateur.service.RoleServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +40,6 @@ public class UtilisateurMapper {
     public List<UtilisateurDTO> fromUtilisateurList(List<Utilisateur> utilisateurs){
         List<UtilisateurDTO> utilisateurDTOS = new ArrayList<>();
         BeanUtils.copyProperties(utilisateurs, utilisateurDTOS);
-
         return utilisateurDTOS;
     }
 
@@ -53,6 +49,7 @@ public class UtilisateurMapper {
 
         return utilisateur;
     }
+
 
     public RoleDTO fromRole(Role role){
         RoleDTO roleDTO = new RoleDTO();
