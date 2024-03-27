@@ -2,10 +2,12 @@ package anubis.lab.anubisproject.features.article.entity;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import anubis.lab.anubisproject.features.tag.entity.Tag;
 import anubis.lab.anubisproject.features.utilisateur.entity.UtilisateurRole;
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -27,6 +29,11 @@ public class Article {
     private int views;
     private boolean isPublished;
     private boolean isFrontPage;
+    private String frontImageUrl;
+    private String videoUrl;
+    private String postLink;
+    @Enumerated(EnumType.STRING)
+    private ArticleType articleType;
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Utilisateur> utilisateurs;
     @ManyToMany(cascade = CascadeType.ALL)
@@ -42,24 +49,35 @@ public class Article {
     @OneToMany(mappedBy = "article")
     @JsonIgnore
     private List<Reaction> reactions;
+    @OneToMany(mappedBy = "article")
+    private List<AuthorOpinion> authorOpinions;
+    @OneToMany(mappedBy = "article")
+    private List<ArticleSuggestion> suggestions;
     private String createdAt;
     private String updatedAt;
 
     public Article() {
     }
 
-    public Article(Long id, String title, String content, int views, boolean isPublished, boolean isFrontPage, List<Utilisateur> utilisateurs, Set<Category> categories, Set<Tag> tags, List<Comment> comments, List<Reaction> reactions, String createdAt, String updatedAt) {
+    public Article(Long id, String title, String content, int views, boolean isPublished, boolean isFrontPage, String frontImageUrl, String videoUrl, String postLink, ArticleType articleType,
+                   List<Utilisateur> utilisateurs, Set<Category> categories, Set<Tag> tags, List<Comment> comments, List<Reaction> reactions, List<AuthorOpinion> authorOpinions, List<ArticleSuggestion> suggestions, String createdAt, String updatedAt) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.views = views;
         this.isPublished = isPublished;
         this.isFrontPage = isFrontPage;
+        this.frontImageUrl = frontImageUrl;
+        this.videoUrl = videoUrl;
+        this.postLink = postLink;
+        this.articleType = articleType;
         this.utilisateurs = utilisateurs;
         this.categories = categories;
         this.tags = tags;
         this.comments = comments;
         this.reactions = reactions;
+        this.authorOpinions = authorOpinions;
+        this.suggestions = suggestions;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -164,8 +182,56 @@ public class Article {
         return updatedAt;
     }
 
+    public ArticleType getArticleType() {
+        return articleType;
+    }
+
+    public void setArticleType(ArticleType articleType) {
+        this.articleType = articleType;
+    }
+
+    public String getFrontImageUrl() {
+        return frontImageUrl;
+    }
+
+    public void setFrontImageUrl(String frontImageUrl) {
+        this.frontImageUrl = frontImageUrl;
+    }
+
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
+
+    public String getPostLink() {
+        return postLink;
+    }
+
+    public void setPostLink(String postLink) {
+        this.postLink = postLink;
+    }
+
+    public List<AuthorOpinion> getAuthorOpinions() {
+        return authorOpinions;
+    }
+
+    public void setAuthorOpinions(List<AuthorOpinion> authorOpinions) {
+        this.authorOpinions = authorOpinions;
+    }
+
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<ArticleSuggestion> getSuggestions() {
+        return suggestions;
+    }
+
+    public void setSuggestions(List<ArticleSuggestion> suggestions) {
+        this.suggestions = suggestions;
     }
 
     @Override

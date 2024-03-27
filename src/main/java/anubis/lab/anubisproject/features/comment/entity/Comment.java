@@ -1,6 +1,7 @@
 package anubis.lab.anubisproject.features.comment.entity;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -30,19 +31,22 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private Customer customer;
+    @OneToMany(mappedBy = "comment")
+    private List<SignalComment> signalComments;
     private String createdAt;
     private String updatedAt;
 
     public Comment() {
     }
 
-    public Comment(Long id, String content, String customerName, boolean isDisplay, Article article, Customer customer, String createdAt, String updatedAt) {
+    public Comment(Long id, String content, String customerName, boolean isDisplay, Article article, Customer customer, List<SignalComment> signalComments, String createdAt, String updatedAt) {
         this.id = id;
         this.content = content;
         this.customerName = customerName;
         this.isDisplay = isDisplay;
         this.article = article;
         this.customer = customer;
+        this.signalComments = signalComments;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -63,34 +67,6 @@ public class Comment {
         this.content = content;
     }
 
-    public Article getArticle() {
-        return article;
-    }
-
-    public void setArticle(Article article) {
-        this.article = article;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
-
     public String getCustomerName() {
         return customerName;
     }
@@ -107,21 +83,43 @@ public class Comment {
         isDisplay = display;
     }
 
-    public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
+    public Article getArticle() {
+        return article;
     }
 
-    @Override
-    public String toString() {
-        return "Comment{" +
-                "id=" + id +
-                ", content='" + content + '\'' +
-                ", customerName='" + customerName + '\'' +
-                ", isDisplay=" + isDisplay +
-                ", article=" + article +
-                ", customer=" + customer +
-                ", createdAt='" + createdAt + '\'' +
-                ", updatedAt='" + updatedAt + '\'' +
-                '}';
+    public void setArticle(Article article) {
+        this.article = article;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public List<SignalComment> getSignalComments() {
+        return signalComments;
+    }
+
+    public void setSignalComments(List<SignalComment> signalComments) {
+        this.signalComments = signalComments;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

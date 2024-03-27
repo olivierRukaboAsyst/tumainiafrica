@@ -19,6 +19,7 @@ public class ResponseArticleDTO {
     private int numberOfLaugh;
     private int numberOfDislike;
     private int commentNumber;
+    private String readingTime;
     private boolean isPublished;
     private boolean isFrontPage;
     private Set<CategoryDTO> categories;
@@ -174,4 +175,13 @@ public class ResponseArticleDTO {
     public void setNumberOfDislike(int numberOfDislike) {
         this.numberOfDislike = numberOfDislike;
     }
+
+    public String getReadingTime() {
+        return readingTime;
+    }
+
+    public void setReadingTime(String readingTime) {
+        this.readingTime = readingTime;
+    }
+
 }

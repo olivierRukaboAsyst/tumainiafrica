@@ -10,8 +10,11 @@ import anubis.lab.anubisproject.exceptions.ErrorEntity;
 import anubis.lab.anubisproject.exceptions.NotFoundException;
 import anubis.lab.anubisproject.features.article.dto.ReactionDTO;
 import anubis.lab.anubisproject.features.article.dto.ResponseArticleDTO;
+import anubis.lab.anubisproject.features.article.entity.ArticleType;
+import anubis.lab.anubisproject.features.article.entity.AuthorOpinion;
 import anubis.lab.anubisproject.features.article.entity.Reaction;
 import anubis.lab.anubisproject.features.article.mapper.ReactionMapper;
+import anubis.lab.anubisproject.features.article.repository.AuthorRepository;
 import anubis.lab.anubisproject.features.article.repository.ReactionRepository;
 import anubis.lab.anubisproject.features.category.dto.CategoryDTO;
 import anubis.lab.anubisproject.features.category.mapper.CategoryMapper;
@@ -53,10 +56,11 @@ public class ArticleServiceImpl implements ArticleResolver {
     private final UtilisateurMapper userMapper;
     private final ReactionRepository reactionRepository;
     private ReactionMapper reactMapper;
+    private AuthorRepository authorRepository;
 
     public ArticleServiceImpl(ArticleRepository articleRepository, UtilisateurRepository utilisateurRepository, UtilisateurResolver utilisateurService,
                               CategoryRepository categoryRepository, TagRepository tagRepository, ArticleMapper mapper, UtilisateurMapper userMapper,
-                              ReactionRepository reactionRepository, ReactionMapper reactMapper) {
+                              ReactionRepository reactionRepository, ReactionMapper reactMapper, AuthorRepository authorRepository) {
         this.articleRepository = articleRepository;
         this.utilisateurService = utilisateurService;
         this.utilisateurRepository = utilisateurRepository;
@@ -66,6 +70,7 @@ public class ArticleServiceImpl implements ArticleResolver {
         this.userMapper = userMapper;
         this.reactionRepository = reactionRepository;
         this.reactMapper = reactMapper;
+        this.authorRepository = authorRepository;
     }
 
     @Override
@@ -81,6 +86,7 @@ public class ArticleServiceImpl implements ArticleResolver {
         if (idUtilisateur == null || categories.isEmpty() || tagList.isEmpty()){
             throw new BadRequestExeption("Verifier si la categorie, tag ou l'Utilisateur sont présents");
         }
+
         article.setPublished(true);
         List<Utilisateur> requestUsers = new ArrayList<>();
         requestUsers.add(userMapper.fromUtilisateurDTO(utilisateur));
@@ -90,6 +96,28 @@ public class ArticleServiceImpl implements ArticleResolver {
         article.setCreatedAt(new Constant().dateFormated());
         Article savedArticle = articleRepository.save(article);
 
+        if (Objects.isNull(article.getArticleType())){
+            article.setArticleType(ArticleType.NORMAL);
+        }
+        if (article.getArticleType().equals(ArticleType.INTERVIEW)){
+            for (AuthorOpinion author : article.getAuthorOpinions()){
+                if (Objects.isNull(article.getVideoUrl())) throw new BadRequestExeption("La video de l'interview est obligatoire");
+                author.setArticle(savedArticle);
+                authorRepository.save(author);
+            }
+        }
+        if (article.getArticleType().equals(ArticleType.OPINION)){
+            for (AuthorOpinion author : article.getAuthorOpinions()){
+                author.setArticle(savedArticle);
+                authorRepository.save(author);
+            }
+        }
+        if (article.getArticleType().equals(ArticleType.POST)){
+            if (Objects.isNull(article.getPostLink())) throw new BadRequestExeption("Le lien du Post du reseau est obligatoire pour la source");
+        }
+        if (article.getArticleType().equals(ArticleType.VIDEO)){
+            if (Objects.isNull(article.getVideoUrl())) throw new BadRequestExeption("La video est obligatoire pour les articles du type Vidéo");
+        }
         Article newArticle = articleRepository.findById(savedArticle.getId()).orElseThrow();
         CompletableFuture.delayedExecutor(1, TimeUnit.MINUTES).execute(()->{
             newArticle.setFrontPage(false);
@@ -184,7 +212,7 @@ public class ArticleServiceImpl implements ArticleResolver {
         Article article = articleRepository.findById(idArticle).orElseThrow();
         List<Utilisateur> utilisateurs = utilisateurRepository.findAllById(idUtilisateurs);
         try {
-            article.setUtilisateurs(utilisateurs);// getUtilisateurs().add();
+            article.setUtilisateurs(utilisateurs);
             Article article1 = articleRepository.save(article);
             return mapper.fromArticleRequest(article1);
         }catch (Exception e){

@@ -29,6 +29,7 @@ import anubis.lab.anubisproject.features.article.dto.ArticleDTO;
 import anubis.lab.anubisproject.features.article.entity.Article;
 import lombok.AllArgsConstructor;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -123,6 +124,12 @@ public class ArticleMapper {
         articleDTO.setNumberOflike(reactionRepository.getTotalLikes(article.getId()));
         articleDTO.setNumberOfLaugh(reactionRepository.getTotalLaughs(article.getId()));
         articleDTO.setNumberOfDislike(reactionRepository.getTotalDisLikes(article.getId()));
+        StringTokenizer tokenizer = new StringTokenizer(article.getContent());
+        int n = tokenizer.countTokens();
+        double readingTime = (double) n / 200;
+        DecimalFormat df = new DecimalFormat("#.##");
+        String formatedTime = df.format(readingTime);
+        articleDTO.setReadingTime(formatedTime);
         BeanUtils.copyProperties(article, articleDTO);
 
         return articleDTO;
